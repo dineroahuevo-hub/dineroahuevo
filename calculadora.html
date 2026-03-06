@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Cuánto Pagaría al Mes? | Dinero a Huevo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5A623;
+    --gold-dark: #D48B0F;
+    --gold-light: #FFF3D6;
+    --green: #2D8B4E;
+    --green-dark: #1E6B38;
+    --green-light: #E8F5EC;
+    --cream: #FFF9EE;
+    --brown: #5C3D1A;
+    --brown-light: #8B6B3D;
+    --text: #2C2416;
+    --text-muted: #7A6B55;
+    --white: #FFFFFF;
+    --shadow: 0 4px 20px rgba(92,61,26,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(circle at 15% 20%, rgba(245,166,35,0.08) 0%, transparent 45%), radial-gradient(circle at 85% 80%, rgba(45,139,78,0.06) 0%, transparent 45%); pointer-events: none; z-index: 0; }
+
+  .container { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 20px 16px 48px; }
+
+  .header { text-align: center; margin-bottom: 24px; animation: slideDown 0.5s ease-out; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  .brand-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--green); color: var(--white); padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 14px; }
+  .header h1 { font-family: 'Fredoka', sans-serif; font-size: 27px; font-weight: 700; color: var(--brown); line-height: 1.2; margin-bottom: 6px; }
+  .header h1 span { color: var(--gold-dark); }
+  .header p { color: var(--text-muted); font-size: 13px; }
+
+  .card { background: var(--white); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 14px; border: 1px solid rgba(245,166,35,0.08); animation: fadeUp 0.4s ease-out both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-label { font-family: 'Fredoka', sans-serif; font-size: 12px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-icon { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .card-icon.green { background: var(--green-light); }
+  .card-icon.gold { background: var(--gold-light); }
+
+  .input-group { margin-bottom: 0; }
+  .input-label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .input-hint { display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px; font-style: italic; }
+  .input-wrap { position: relative; }
+  .input-prefix { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 17px; font-weight: 700; color: var(--brown-light); pointer-events: none; }
+  .input-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 15px; font-weight: 700; color: var(--brown-light); pointer-events: none; }
+
+  input[type="text"] { width: 100%; padding: 13px 14px 13px 30px; border: 2px solid #E8E0D4; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); background: var(--cream); transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+  input:focus { outline: none; border-color: var(--gold); background: var(--white); box-shadow: 0 0 0 4px rgba(245,166,35,0.12); }
+
+  .dp-grid { display: flex; gap: 8px; margin-top: 10px; }
+  .dp-btn { flex: 1; padding: 11px 4px; border: 2px solid #E8E0D4; border-radius: 12px; background: var(--cream); font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.18s ease; text-align: center; }
+  .dp-btn:hover { border-color: var(--gold); color: var(--text); background: var(--gold-light); }
+  .dp-btn.active { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+  .dp-btn .dp-pct { display: block; font-size: 17px; }
+  .dp-btn .dp-lbl { display: block; font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 600; margin-top: 2px; opacity: 0.7; line-height: 1.3; }
+
+  /* HERO */
+  .hero-card { background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%); color: var(--white); border: none; position: relative; overflow: hidden; text-align: center; padding: 32px 24px 28px; }
+  .hero-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 160px; height: 160px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+  .hero-card::after { content: ''; position: absolute; bottom: -70px; left: -30px; width: 200px; height: 200px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; opacity: 0.75; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; position: relative; z-index: 1; }
+  .hero-amount { font-family: 'Fredoka', sans-serif; font-size: 58px; font-weight: 700; line-height: 1; text-shadow: 0 3px 12px rgba(0,0,0,0.15); position: relative; z-index: 1; transition: all 0.3s ease; }
+  .hero-sub { font-size: 13px; opacity: 0.7; margin-top: 8px; position: relative; z-index: 1; }
+  .result-divider { height: 1px; background: rgba(255,255,255,0.15); margin: 20px 0; position: relative; z-index: 1; }
+  .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; position: relative; z-index: 1; }
+  .breakdown-item { text-align: center; }
+  .bi-label { font-size: 10px; font-weight: 600; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .bi-value { font-family: 'Fredoka', sans-serif; font-size: 20px; font-weight: 700; }
+  .bi-note { font-size: 10px; opacity: 0.55; margin-top: 2px; line-height: 1.3; }
+
+  /* CASH CARD */
+  .cash-card { background: linear-gradient(135deg, #7B4F1E, var(--brown)); color: var(--white); border: none; position: relative; overflow: hidden; }
+  .cash-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 130px; height: 130px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+  .cash-card .card-label { color: rgba(255,255,255,0.75); }
+  .cash-card .card-label .card-icon { background: rgba(255,255,255,0.12); }
+  .cash-total-label { font-size: 12px; opacity: 0.7; margin-bottom: 4px; position: relative; z-index: 1; }
+  .cash-total { font-family: 'Fredoka', sans-serif; font-size: 42px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.15); position: relative; z-index: 1; margin-bottom: 16px; }
+  .cash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; z-index: 1; }
+  .cash-item { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; }
+  .ci-label { font-size: 10px; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .ci-value { font-family: 'Fredoka', sans-serif; font-size: 20px; font-weight: 700; }
+  .ci-note { font-size: 10px; opacity: 0.5; margin-top: 2px; }
+
+  /* DPA */
+  .dpa-card { background: var(--gold-light); border: 2px solid var(--gold); }
+  .dpa-card .card-label { color: var(--gold-dark); }
+  .dpa-text { font-size: 14px; line-height: 1.6; color: var(--brown); }
+
+  /* BURRO */
+  .burro-inner { display: flex; gap: 12px; align-items: flex-start; }
+  .burro-emoji { font-size: 34px; flex-shrink: 0; animation: bobble 2.5s ease-in-out infinite; }
+  @keyframes bobble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  .burro-text { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .burro-text strong { color: var(--brown); }
+
+  /* DISCLAIMER */
+  .disclaimer { background: rgba(92,61,26,0.05); border: 1px solid rgba(92,61,26,0.1); border-radius: 14px; padding: 14px 16px; font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+  .disclaimer strong { color: var(--brown-light); }
+
+  /* CTA */
+  .cta-card { background: var(--white); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); text-align: center; border: 1px solid rgba(245,166,35,0.08); }
+  .cta-title { font-family: 'Fredoka', sans-serif; font-size: 18px; color: var(--brown); margin-bottom: 16px; }
+  .cta-btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 12px; font-family: 'Fredoka', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; margin-bottom: 10px; }
+  .cta-btn.primary { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: var(--white); box-shadow: 0 4px 14px rgba(45,139,78,0.3); }
+  .cta-btn.primary:hover { transform: translateY(-2px); }
+  .cta-btn.whatsapp { background: #25D366; color: var(--white); box-shadow: 0 4px 14px rgba(37,211,102,0.25); }
+  .cta-btn.whatsapp:hover { transform: translateY(-2px); }
+  .phone-line { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .phone-line strong { color: var(--brown); }
+
+  .tagline { text-align: center; margin-top: 24px; font-family: 'Fredoka', sans-serif; font-size: 13px; color: var(--brown-light); opacity: 0.5; }
+
+  @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+  .pulse { animation: pulse 0.3s ease-out; }
+
+  @media (max-width: 380px) {
+    .hero-amount { font-size: 44px; }
+    .cash-total { font-size: 34px; }
+    .dp-btn .dp-pct { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="brand-tag">🫏 Dinero a Huevo</div>
+    <h1>¿Cuánto Pagaría<br><span>al Mes?</span></h1>
+    <p>Calcula tu pago estimado en segundos 🏠</p>
+  </div>
+
+  <!-- Home Price -->
+  <div class="card">
+    <div class="card-label"><span class="card-icon green">🏠</span>Precio de la Casa</div>
+    <div class="input-group">
+      <label class="input-label">¿Cuánto cuesta la casa?
+        <span class="input-hint">Pon el precio que viste en Zillow o Redfin</span>
+      </label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="text" id="homePrice" placeholder="400,000" inputmode="numeric" oninput="fmtInput(this); calculate()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Down Payment -->
+  <div class="card">
+    <div class="card-label"><span class="card-icon gold">💰</span>Enganche</div>
+    <div class="input-group">
+      <label class="input-label">¿Cuánto quieres dar de enganche?</label>
+      <div class="dp-grid">
+        <button class="dp-btn active" data-pct="3.5" onclick="selectDP(this)">
+          <span class="dp-pct">3.5%</span>
+          <span class="dp-lbl">FHA mínimo</span>
+        </button>
+        <button class="dp-btn" data-pct="5" onclick="selectDP(this)">
+          <span class="dp-pct">5%</span>
+          <span class="dp-lbl">Convencional</span>
+        </button>
+        <button class="dp-btn" data-pct="10" onclick="selectDP(this)">
+          <span class="dp-pct">10%</span>
+          <span class="dp-lbl">Mejor tasa</span>
+        </button>
+        <button class="dp-btn" data-pct="20" onclick="selectDP(this)">
+          <span class="dp-pct">20%</span>
+          <span class="dp-lbl">Sin seguro del banco</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interest Rate -->
+  <div class="card">
+    <div class="card-label"><span class="card-icon green">📈</span>Tasa de Interés</div>
+    <div class="input-group">
+      <label class="input-label">¿Qué tasa usamos?
+        <span class="input-hint">La tasa actual está entre 6%–7% dependiendo de tu crédito y tipo de préstamo. Cámbiala para ver cómo afecta tu pago.</span>
+      </label>
+      <div class="input-wrap">
+        <input type="text" id="interestRate" value="6.75" inputmode="decimal" oninput="calculate()" style="padding-left:14px; padding-right:34px;">
+        <span class="input-suffix">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO: Monthly Payment -->
+  <div class="card hero-card">
+    <div class="hero-eyebrow">Tu pago mensual estimado</div>
+    <div class="hero-amount" id="heroAmount">—</div>
+    <div class="hero-sub" id="heroSub">Pon el precio de la casa para ver tu número</div>
+    <div class="result-divider"></div>
+    <div class="breakdown-grid">
+      <div class="breakdown-item">
+        <div class="bi-label">Principal + Interés</div>
+        <div class="bi-value" id="piVal">—</div>
+        <div class="bi-note">La parte del préstamo</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bi-label">Taxes + Seguro</div>
+        <div class="bi-value" id="tiVal">—</div>
+        <div class="bi-note">Impuesto predial + seguro de hogar</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bi-label">Seguro del Banco</div>
+        <div class="bi-value" id="pmiVal">—</div>
+        <div class="bi-note" id="pmiNote">Solo si enganche &lt; 20%</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bi-label">Tasa Usada</div>
+        <div class="bi-value" id="rateVal">—</div>
+        <div class="bi-note">30 años fijo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cash to Close -->
+  <div class="card cash-card">
+    <div class="card-label"><span class="card-icon">💵</span>Lo que Necesitas para Entrar</div>
+    <div class="cash-total-label">Total aproximado de bolsillo</div>
+    <div class="cash-total" id="cashTotal">—</div>
+    <div class="cash-grid">
+      <div class="cash-item">
+        <div class="ci-label">Enganche</div>
+        <div class="ci-value" id="dpVal">—</div>
+        <div class="ci-note" id="dpPct">3.5%</div>
+      </div>
+      <div class="cash-item">
+        <div class="ci-label">Costos de Cierre</div>
+        <div class="ci-value" id="ccVal">—</div>
+        <div class="ci-note">~3% estimado</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPA Banner -->
+  <div class="card dpa-card">
+    <div class="card-label"><span class="card-icon gold">💡</span>¿Esos números te asustaron?</div>
+    <div class="dpa-text">
+      <strong>No te rindas todavía.</strong> Hay programas de ayuda que pueden cubrir tu enganche <em>y</em> tus costos de cierre. Con un buen agente de bienes raíces, el vendedor puede darte dinero para cubrir tus costos o bajarte la tasa. Estos números pueden ser mucho más bajos de lo que ves aquí.
+    </div>
+  </div>
+
+  <!-- El Burro -->
+  <div class="card">
+    <div class="burro-inner">
+      <div class="burro-emoji">🫏</div>
+      <div class="burro-text" id="burroText"><strong>El Burro dice:</strong> Pon el precio de la casa arriba y te explico tus números. ¡Tan fácil, hasta el burro aprende!</div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    ⚠️ <strong>Este cálculo es solo un estimado.</strong> Tu pago real puede variar dependiendo de tu ubicación (taxes e insurance cambian por condado), tu puntaje de crédito, y el tipo de préstamo que califiques. Para saber tu número exacto — habla conmigo.
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <div class="cta-title">¿Quieres saber tu número exacto? 🏡</div>
+    <a class="cta-btn primary" href="https://calendly.com/dineroahuevo/30min" target="_blank">📅 Agenda Tu Consulta Gratis</a>
+    <a class="cta-btn whatsapp" href="https://wa.me/16265367113?text=Hola%20Nieves%2C%20us%C3%A9%20la%20calculadora%20y%20tengo%20preguntas" target="_blank">💬 Escríbeme por WhatsApp</a>
+    <div class="phone-line">📞 O llámame: <strong>(626) 536-7113</strong> · Nieves · NMLS #2036260</div>
+  </div>
+
+  <div class="tagline">Tan fácil, hasta el burro aprende™</div>
+</div>
+
+<script>
+  function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+
+  function parseNum(id) {
+    return parseFloat(document.getElementById(id).value.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function fmtInput(input) {
+    const raw = input.value.replace(/[^0-9]/g, '');
+    if (raw) input.value = parseInt(raw).toLocaleString('en-US');
+  }
+
+  function pulse(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('pulse');
+    void el.offsetWidth;
+    el.classList.add('pulse');
+  }
+
+  function set(id, val) {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = val; pulse(id); }
+  }
+
+  let selectedDP = 3.5;
+
+  function selectDP(btn) {
+    document.querySelectorAll('.dp-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedDP = parseFloat(btn.dataset.pct);
+    calculate();
+  }
+
+  function calculate() {
+    const price = parseNum('homePrice');
+    if (price === 0) return;
+
+    const rateRaw = parseNum('interestRate');
+    const annualRate = rateRaw > 0 ? rateRaw : 6.75;
+    const rate = annualRate / 100 / 12;
+    const n = 360;
+
+    const dp = price * (selectedDP / 100);
+    const loan = price - dp;
+    const cc = price * 0.03;
+    const cash = dp + cc;
+
+    const pi = loan > 0 ? loan * (rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1) : 0;
+    const taxes = (price * 0.0125) / 12;
+    const insurance = (price * 0.004) / 12;
+    const pmi = selectedDP < 20 ? (loan * 0.007) / 12 : 0;
+    const total = pi + taxes + insurance + pmi;
+
+    // Hero
+    set('heroAmount', '$' + fmt(total));
+    document.getElementById('heroSub').textContent = 'para una casa de $' + fmt(price) + ' con ' + selectedDP + '% de enganche';
+
+    // Breakdown
+    set('piVal', '$' + fmt(pi));
+    set('tiVal', '$' + fmt(taxes + insurance));
+    set('pmiVal', pmi > 0 ? '$' + fmt(pmi) : 'N/A');
+    document.getElementById('pmiNote').textContent = pmi > 0 ? 'Se cancela al llegar al 20% de equity' : 'No aplica con 20%+';
+    set('rateVal', annualRate + '%');
+
+    // Cash to close
+    set('cashTotal', '$' + fmt(cash));
+    set('dpVal', '$' + fmt(dp));
+    document.getElementById('dpPct').textContent = selectedDP + '%';
+    set('ccVal', '$' + fmt(cc));
+
+    // El Burro
+    const m = Math.round(total);
+    const c = Math.round(cash);
+    let burro = '';
+    if (m < 2000) {
+      burro = `<strong>¡A huevo!</strong> $${fmt(m)}/mes es muy manejable — muchas familias pagan más de renta. Y para entrar solo necesitas ~$${fmt(c)}, que puede bajar bastante con programas de ayuda.`;
+    } else if (m < 3000) {
+      burro = `<strong>¡Sí se puede!</strong> $${fmt(m)}/mes es alcanzable para muchas familias. El efectivo para entrar es ~$${fmt(c)} — pero hay programas que pueden ayudar a cubrirlo. Habla conmigo antes de rendirte.`;
+    } else if (m < 4000) {
+      burro = `<strong>$${fmt(m)}/mes</strong> requiere un buen ingreso — pero no es imposible. Prueba subir el enganche para bajar el pago. Y recuerda: los programas de ayuda pueden cubrir parte de ese enganche.`;
+    } else {
+      burro = `<strong>Número alto —</strong> pero eso no significa que no puedas. Prueba con un enganche más alto o una casa de menor precio. Y recuerda: esto es un estimado. Tu situación real puede ser diferente. ¡Habla conmigo!`;
+    }
+    document.getElementById('burroText').innerHTML = burro;
+  }
+</script>
+</body>
+</html>
