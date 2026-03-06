@@ -660,8 +660,26 @@
     const name = document.getElementById('leadName').value.trim();
     const phone = document.getElementById('leadPhone').value.trim();
     const email = document.getElementById('leadEmail').value.trim();
+    // Require all fields
     if (!name || !phone || !email) {
       alert('Por favor llena tu nombre, teléfono y correo para ver tus resultados.');
+      return;
+    }
+    // Validate name
+    if (name.length < 2) {
+      alert('Por favor escribe tu nombre completo.');
+      return;
+    }
+    // Validate phone — at least 10 digits
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      alert('Por favor escribe un número de teléfono válido (10 dígitos).');
+      return;
+    }
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Por favor escribe un correo electrónico válido. Ejemplo: tunombre@gmail.com');
       return;
     }
 
