@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Estoy Listo Para Comprar Casa? | Dinero a Huevo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5A623;
+    --gold-dark: #D48B0F;
+    --gold-light: #FFF3D6;
+    --green: #2D8B4E;
+    --green-dark: #1E6B38;
+    --green-light: #E8F5EC;
+    --red: #D94F4F;
+    --red-light: #FDEAEA;
+    --yellow: #E8A817;
+    --yellow-light: #FFF8E1;
+    --cream: #FFF9EE;
+    --brown: #5C3D1A;
+    --brown-light: #8B6B3D;
+    --text: #2C2416;
+    --text-muted: #7A6B55;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(circle at 15% 25%, rgba(245,166,35,0.07) 0%, transparent 50%), radial-gradient(circle at 85% 75%, rgba(45,139,78,0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+  .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; min-height: 100vh; }
+
+  .header { text-align: center; margin-bottom: 24px; }
+  .brand-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--green); color: var(--white); padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .header h1 { font-family: 'Fredoka', sans-serif; font-size: 28px; font-weight: 700; color: var(--brown); line-height: 1.2; margin-bottom: 6px; }
+  .header h1 .orange { color: var(--gold-dark); }
+  .header p { color: var(--text-muted); font-size: 14px; }
+
+  .progress-container { margin-bottom: 24px; }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-step { font-family: 'Fredoka', sans-serif; font-size: 13px; font-weight: 600; color: var(--green); }
+  .progress-time { font-size: 12px; color: var(--text-muted); }
+  .progress-track { height: 8px; background: #E8E0D4; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); border-radius: 4px; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); width: 0%; }
+
+  .screen { display: none; animation: fadeIn 0.4s ease-out; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .question-card { background: var(--white); border-radius: 20px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(92,61,26,0.1); border: 1px solid rgba(245,166,35,0.08); }
+  .question-emoji { font-size: 40px; margin-bottom: 12px; display: block; }
+  .question-text { font-family: 'Fredoka', sans-serif; font-size: 21px; font-weight: 600; color: var(--brown); line-height: 1.3; margin-bottom: 6px; }
+  .question-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn { width: 100%; padding: 16px 18px; border: 2px solid #E8E0D4; border-radius: 14px; background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s ease; text-align: left; display: flex; align-items: center; gap: 12px; }
+  .option-btn:hover { border-color: var(--gold); background: var(--gold-light); transform: translateX(4px); }
+  .option-btn.selected { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+  .opt-icon { width: 32px; height: 32px; border-radius: 10px; background: var(--white); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.2s ease; }
+  .option-btn.selected .opt-icon { background: var(--green); }
+  .opt-text { flex: 1; }
+  .opt-detail { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+  .option-btn.selected .opt-detail { color: var(--green); }
+
+  .text-input-wrap { margin-top: 4px; }
+  .text-input-wrap input { width: 100%; padding: 15px 16px; border: 2px solid #E8E0D4; border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500; color: var(--text); background: var(--cream); transition: all 0.2s ease; outline: none; }
+  .text-input-wrap input:focus { border-color: var(--gold); background: var(--white); box-shadow: 0 0 0 4px rgba(245,166,35,0.12); }
+  .text-input-wrap input::placeholder { color: #B8A88A; }
+
+  .siguiente-btn { width: 100%; margin-top: 14px; padding: 15px; background: linear-gradient(135deg, var(--green), var(--green-dark)); color: var(--white); border: none; border-radius: 14px; font-family: 'Fredoka', sans-serif; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(45,139,78,0.3); }
+  .siguiente-btn:hover { transform: translateY(-2px); }
+  .siguiente-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .other-input { margin-top: 10px; display: none; }
+  .other-input.visible { display: block; }
+
+  .location-sub { margin-top: 16px; padding: 16px; background: var(--gold-light); border: 2px solid rgba(245,166,35,0.3); border-radius: 14px; display: none; }
+  .location-sub.visible { display: block; }
+  .location-sub-label { font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 10px; }
+
+  .debt-followup { margin-top: 12px; padding: 16px; background: var(--gold-light); border: 2px solid rgba(245,166,35,0.3); border-radius: 14px; display: none; }
+  .debt-followup.visible { display: block; }
+  .debt-followup-label { font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 10px; }
+  .debt-options { display: flex; flex-direction: column; gap: 8px; }
+  .debt-opt { width: 100%; padding: 12px 14px; border: 2px solid rgba(245,166,35,0.4); border-radius: 10px; background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s ease; text-align: left; }
+  .debt-opt:hover { border-color: var(--green); background: var(--green-light); }
+  .debt-opt.selected { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+
+  .lead-capture { background: var(--white); border-radius: 20px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(92,61,26,0.1); border: 1px solid rgba(245,166,35,0.08); }
+  .burro-big { font-size: 52px; display: block; text-align: center; margin-bottom: 12px; animation: bounce 1s ease-in-out; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-12px); } 60% { transform: translateY(-4px); } }
+  .lead-capture h2 { font-family: 'Fredoka', sans-serif; font-size: 24px; color: var(--brown); margin-bottom: 16px; text-align: center; }
+  .lead-value-prop { background: linear-gradient(135deg, var(--green-light), #D4EDDA); border: 2px solid rgba(45,139,78,0.2); border-radius: 16px; padding: 18px; margin-bottom: 16px; }
+  .value-title { font-family: 'Fredoka', sans-serif; font-size: 15px; font-weight: 700; color: var(--green-dark); margin-bottom: 10px; }
+  .lead-value-prop ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .lead-value-prop ul li { font-size: 14px; color: var(--text); display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .check { color: var(--green); font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+  .nieves-note { background: var(--gold-light); border-left: 4px solid var(--gold); border-radius: 0 12px 12px 0; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: var(--brown); line-height: 1.5; font-style: italic; }
+  .nieves-note strong { font-style: normal; font-weight: 700; }
+  .lead-form { display: flex; flex-direction: column; gap: 12px; }
+  .lead-form label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: -4px; }
+  .lead-form input { width: 100%; padding: 14px 16px; border: 2px solid #E8E0D4; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--text); background: var(--cream); transition: all 0.2s ease; outline: none; }
+  .lead-form input:focus { border-color: var(--gold); background: var(--white); box-shadow: 0 0 0 4px rgba(245,166,35,0.15); }
+  .lead-form input::placeholder { color: #B8A88A; }
+  .submit-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white); border: none; border-radius: 14px; font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(245,166,35,0.35); transition: all 0.2s ease; margin-top: 4px; }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(245,166,35,0.45); }
+  .privacy-note { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
+
+  .result-screen { text-align: center; }
+  .result-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 24px; font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+  .result-badge.green { background: var(--green-light); color: var(--green-dark); }
+  .result-badge.yellow { background: var(--yellow-light); color: #8B6914; }
+  .result-badge.red { background: var(--red-light); color: var(--red); }
+  .result-card { border-radius: 24px; padding: 32px 24px; box-shadow: 0 8px 40px rgba(92,61,26,0.15); margin-bottom: 16px; position: relative; overflow: hidden; }
+  .result-card.green { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: var(--white); }
+  .result-card.yellow { background: linear-gradient(135deg, #F0B429, #D49B0F); color: var(--white); }
+  .result-card.red { background: linear-gradient(135deg, #C0392B, #A93226); color: var(--white); }
+  .result-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 160px; height: 160px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+  .result-emoji { font-size: 56px; display: block; margin-bottom: 12px; }
+  .result-card h2 { font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
+  .result-desc { font-size: 15px; line-height: 1.6; opacity: 0.92; position: relative; z-index: 1; }
+  .score-meter { margin: 20px 0 8px; position: relative; z-index: 1; }
+  .meter-track { height: 12px; background: rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 6px; background: rgba(255,255,255,0.7); transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .meter-labels { display: flex; justify-content: space-between; font-size: 11px; opacity: 0.7; margin-top: 6px; }
+  .score-number { font-family: 'Fredoka', sans-serif; font-size: 52px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .score-label { font-size: 13px; opacity: 0.8; margin-bottom: 4px; }
+
+  .action-card { background: var(--white); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(92,61,26,0.1); text-align: left; margin-bottom: 16px; }
+  .action-card h3 { font-family: 'Fredoka', sans-serif; font-size: 16px; color: var(--brown); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .action-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #F0E8DC; }
+  .action-item:last-child { border-bottom: none; }
+  .action-num { width: 28px; height: 28px; border-radius: 50%; background: var(--green-light); color: var(--green); font-family: 'Fredoka', sans-serif; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .action-item.yellow-item .action-num { background: var(--yellow-light); color: #8B6914; }
+  .action-item.red-item .action-num { background: var(--red-light); color: var(--red); }
+  .action-text { font-size: 14px; line-height: 1.5; color: var(--text); }
+  .action-text strong { color: var(--brown); }
+  .action-text a { color: var(--green); }
+
+  .nieves-bonus { background: linear-gradient(135deg, #FFF3D6, #FFF9EE); border: 2px solid var(--gold); border-radius: 16px; padding: 20px; margin-bottom: 16px; text-align: left; }
+  .bonus-title { font-family: 'Fredoka', sans-serif; font-size: 15px; font-weight: 700; color: var(--brown); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .nieves-bonus p { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+  .result-insight { background: var(--gold-light); border: 2px solid var(--gold); border-radius: 16px; padding: 18px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; text-align: left; }
+  .ri-burro { font-size: 28px; flex-shrink: 0; }
+  .ri-text { font-size: 13px; line-height: 1.5; color: var(--brown); }
+
+  .cta-btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 14px; font-family: 'Fredoka', sans-serif; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; margin-bottom: 10px; }
+  .cta-btn.primary { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: var(--white); box-shadow: 0 4px 15px rgba(45,139,78,0.35); }
+  .cta-btn.primary:hover { transform: translateY(-2px); }
+  .cta-btn.whatsapp { background: #25D366; color: var(--white); box-shadow: 0 4px 15px rgba(37,211,102,0.3); }
+  .cta-btn.whatsapp:hover { transform: translateY(-2px); }
+  .cta-btn.secondary { background: var(--white); color: var(--green); border: 2px solid var(--green); }
+  .cta-btn.secondary:hover { background: var(--green-light); }
+  .cta-btn.gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--white); box-shadow: 0 4px 15px rgba(245,166,35,0.35); }
+  .cta-btn.gold:hover { transform: translateY(-2px); }
+
+  .phone-save { background: var(--white); border: 2px solid #E8E0D4; border-radius: 14px; padding: 16px; text-align: center; margin-bottom: 10px; }
+  .phone-save p { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+  .phone-num { font-family: 'Fredoka', sans-serif; font-size: 26px; color: var(--brown); font-weight: 700; }
+  .phone-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .tagline { text-align: center; margin-top: 28px; font-family: 'Fredoka', sans-serif; font-size: 13px; color: var(--brown-light); opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand-tag">🫏 Dinero a Huevo</div>
+    <h1>¿Estoy Listo Para<br><span class="orange">Comprar Casa?</span></h1>
+    <p>Quiz de 2 minutos — descubre dónde estás</p>
+  </div>
+
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-info">
+      <span class="progress-step" id="progressLabel">Pregunta 1 de 12</span>
+      <span class="progress-time">⏱ ~2 min</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="screen active" id="q1">
+    <div class="question-card">
+      <span class="question-emoji">🏡</span>
+      <div class="question-text">¿Es esta tu primera vez comprando casa?</div>
+      <div class="question-sub">Algunos programas de ayuda son exclusivos para compradores por primera vez</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(1,'yes',2,event)"><span class="opt-icon">✨</span><span class="opt-text">Sí, es mi primera casa</span></button>
+        <button class="option-btn" onclick="autoAdvance(1,'no',0,event)"><span class="opt-icon">🔄</span><span class="opt-text">No, ya he comprado antes</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="screen" id="q2">
+    <div class="question-card">
+      <span class="question-emoji">📍</span>
+      <div class="question-text">¿Vas a comprar en California?</div>
+      <div class="question-sub">Hay programas especiales de ayuda para compradores en California</div>
+      <div class="options" id="locOptions">
+        <button class="option-btn" id="locYes" onclick="selectLoc('ca',event)"><span class="opt-icon">🌴</span><span class="opt-text">Sí, en California</span></button>
+        <button class="option-btn" id="locNo" onclick="selectLoc('other',event)"><span class="opt-icon">🇺🇸</span><span class="opt-text">No, en otro estado</span></button>
+      </div>
+      <div class="location-sub" id="locSub">
+        <div class="location-sub-label" id="locSubLabel">¿En qué ciudad o condado de California?</div>
+        <div class="text-input-wrap">
+          <input type="text" id="locInput" placeholder="Ej: Los Angeles, Pomona..." oninput="checkInput('locInput','locNext')" />
+        </div>
+        <button class="siguiente-btn" id="locNext" onclick="submitLoc()" disabled>Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="screen" id="q3">
+    <div class="question-card">
+      <span class="question-emoji">🪪</span>
+      <div class="question-text">¿Cómo estás en este país?</div>
+      <div class="question-sub">No te preocupes — hay caminos para todos. Todo es confidencial 🤝</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(3,'citizen_resident',4,event)"><span class="opt-icon">🇺🇸</span><span class="opt-text">Soy ciudadano/a o residente permanente<span class="opt-detail">Ciudadanía o Green Card</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(3,'daca',3,event)"><span class="opt-icon">📄</span><span class="opt-text">Tengo DACA<span class="opt-detail">Hay opciones disponibles</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(3,'itin',2,event)"><span class="opt-icon">✅</span><span class="opt-text">Tengo ITIN<span class="opt-detail">Sí se puede comprar con ITIN</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(3,'none',0,event)"><span class="opt-icon">⏳</span><span class="opt-text">No tengo nada todavía<span class="opt-detail">Hay pasos que podemos tomar juntos</span></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="screen" id="q4">
+    <div class="question-card">
+      <span class="question-emoji">💼</span>
+      <div class="question-text">¿Cómo ganas tu dinero?</div>
+      <div class="question-sub">El tipo de empleo determina qué documentos necesitaremos</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(4,'w2',4,event)"><span class="opt-icon">💼</span><span class="opt-text">Trabajo con W2 (un empleador)<span class="opt-detail">Recibo talón de pago regular</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(4,'w2_multi',4,event)"><span class="opt-icon">💼</span><span class="opt-text">Dos o más trabajos con W2<span class="opt-detail">Puedo combinar los ingresos</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(4,'1099',2,event)"><span class="opt-icon">🧾</span><span class="opt-text">Trabajo por contrato / 1099<span class="opt-detail">Necesitamos taxes de 2 años</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(4,'selfemployed',2,event)"><span class="opt-icon">🏢</span><span class="opt-text">Tengo mi propio negocio<span class="opt-detail">Necesitamos taxes de 2 años</span></span></button>
+        <button class="option-btn" id="otherEmpBtn" onclick="showOtherEmp(event)"><span class="opt-icon">➕</span><span class="opt-text">Otro</span></button>
+      </div>
+      <div class="other-input" id="otherEmpWrap">
+        <input type="text" id="otherEmpInput" placeholder="Describe tu situación..." oninput="checkInput('otherEmpInput','otherEmpNext')" />
+        <button class="siguiente-btn" id="otherEmpNext" onclick="submitOtherEmp()" disabled style="margin-top:10px;">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="screen" id="q5">
+    <div class="question-card">
+      <span class="question-emoji">⏰</span>
+      <div class="question-text">¿Cuánto tiempo llevas en este tipo de trabajo?</div>
+      <div class="question-sub">Los prestamistas buscan estabilidad de ingreso</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(5,'2plus',3,event)"><span class="opt-icon">💪</span><span class="opt-text">2 años o más<span class="opt-detail">¡El número mágico para los lenders!</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(5,'1to2',2,event)"><span class="opt-icon">👍</span><span class="opt-text">1 a 2 años</span></button>
+        <button class="option-btn" onclick="autoAdvance(5,'less1',0,event)"><span class="opt-icon">🌱</span><span class="opt-text">Menos de 1 año</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="screen" id="q6">
+    <div class="question-card">
+      <span class="question-emoji">💵</span>
+      <div class="question-text">¿Cuánto es el ingreso mensual de tu hogar?</div>
+      <div class="question-sub">Incluye el ingreso de tu pareja si aplica — antes de taxes</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(6,'under3k',1,event)"><span class="opt-icon">💰</span><span class="opt-text">Menos de $3,000</span></button>
+        <button class="option-btn" onclick="autoAdvance(6,'3to5k',2,event)"><span class="opt-icon">💰</span><span class="opt-text">$3,000 – $5,000</span></button>
+        <button class="option-btn" onclick="autoAdvance(6,'5to8k',3,event)"><span class="opt-icon">💰</span><span class="opt-text">$5,000 – $8,000</span></button>
+        <button class="option-btn" onclick="autoAdvance(6,'8to12k',3,event)"><span class="opt-icon">💰</span><span class="opt-text">$8,000 – $12,000</span></button>
+        <button class="option-btn" onclick="autoAdvance(6,'over12k',4,event)"><span class="opt-icon">🏆</span><span class="opt-text">Más de $12,000<span class="opt-detail">¡Excelente poder de compra!</span></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="screen" id="q7">
+    <div class="question-card">
+      <span class="question-emoji">📊</span>
+      <div class="question-text">¿Cómo está tu crédito?</div>
+      <div class="question-sub">Si no sabes el número, puedes verificarlo gratis en annualcreditreport.com</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(7,'720plus',4,event)"><span class="opt-icon">🌟</span><span class="opt-text">Excelente (720+)<span class="opt-detail">Las mejores tasas y más opciones</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(7,'660to719',3,event)"><span class="opt-icon">✅</span><span class="opt-text">Bueno (660 – 719)<span class="opt-detail">Muy buenas opciones disponibles</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(7,'580to659',2,event)"><span class="opt-icon">👍</span><span class="opt-text">Regular (580 – 659)<span class="opt-detail">FHA es tu mejor amigo aquí</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(7,'under580',1,event)"><span class="opt-icon">🔧</span><span class="opt-text">Bajo (menos de 580)<span class="opt-detail">Hay trabajo que hacer pero sí es posible</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(7,'none',1,event)"><span class="opt-icon">🆕</span><span class="opt-text">No tengo crédito<span class="opt-detail">Se puede usar historial alternativo</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(7,'dontknow',1,event)"><span class="opt-icon">🤷</span><span class="opt-text">No sé mi puntaje</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="screen" id="q8">
+    <div class="question-card">
+      <span class="question-emoji">🐷</span>
+      <div class="question-text">¿Cuánto tienes ahorrado?</div>
+      <div class="question-sub">Los programas de ayuda pueden reducir bastante lo que necesitas de tu bolsillo</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(8,'none',0,event)"><span class="opt-icon">🌱</span><span class="opt-text">Nada todavía — estoy ahorrando<span class="opt-detail">¡Hay que empezar por algo!</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(8,'under5k',1,event)"><span class="opt-icon">📈</span><span class="opt-text">Menos de $5,000</span></button>
+        <button class="option-btn" onclick="autoAdvance(8,'5to10k',2,event)"><span class="opt-icon">💪</span><span class="opt-text">$5,000 – $10,000</span></button>
+        <button class="option-btn" onclick="autoAdvance(8,'10to20k',3,event)"><span class="opt-icon">🎯</span><span class="opt-text">$10,000 – $20,000<span class="opt-detail">¡Buen rango para empezar!</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(8,'over20k',4,event)"><span class="opt-icon">🏆</span><span class="opt-text">Más de $20,000</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="screen" id="q9">
+    <div class="question-card">
+      <span class="question-emoji">👫</span>
+      <div class="question-text">¿Vas a comprar solo/a o con alguien?</div>
+      <div class="question-sub">Un co-comprador puede aumentar tu poder de compra</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(9,'alone',0,event)"><span class="opt-icon">👤</span><span class="opt-text">Solo/a</span></button>
+        <button class="option-btn" onclick="autoAdvance(9,'spouse',0,event)"><span class="opt-icon">👫</span><span class="opt-text">Con mi esposo/a o pareja</span></button>
+        <button class="option-btn" onclick="autoAdvance(9,'family',0,event)"><span class="opt-icon">👨‍👩‍👦</span><span class="opt-text">Con un familiar</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 (skipped if alone) -->
+  <div class="screen" id="q10">
+    <div class="question-card">
+      <span class="question-emoji">🪪</span>
+      <div class="question-text">¿Cómo está tu co-comprador en este país?</div>
+      <div class="question-sub">Esto me ayuda a encontrar el programa correcto para tu familia 🤝</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(10,'citizen_resident',0,event)"><span class="opt-icon">🇺🇸</span><span class="opt-text">Ciudadano/a o residente permanente</span></button>
+        <button class="option-btn" onclick="autoAdvance(10,'daca',0,event)"><span class="opt-icon">📄</span><span class="opt-text">Tiene DACA</span></button>
+        <button class="option-btn" onclick="autoAdvance(10,'itin',0,event)"><span class="opt-icon">✅</span><span class="opt-text">Tiene ITIN<span class="opt-detail">Familia de estatus mixto — hay opciones</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(10,'none',0,event)"><span class="opt-icon">⏳</span><span class="opt-text">No tiene documentos todavía</span></button>
+        <button class="option-btn" onclick="autoAdvance(10,'unsure',0,event)"><span class="opt-icon">🤷</span><span class="opt-text">No estoy seguro/a</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 Deudas -->
+  <div class="screen" id="q11">
+    <div class="question-card">
+      <span class="question-emoji">💳</span>
+      <div class="question-text">¿Tienes deudas como carros, tarjetas, o préstamos?</div>
+      <div class="question-sub">Esto afecta tu relación deuda-ingreso (DTI) — un factor clave para calificar</div>
+      <div class="options">
+        <button class="option-btn" onclick="selectDebt('no',3,event)"><span class="opt-icon">✅</span><span class="opt-text">No tengo deudas<span class="opt-detail">¡Excelente para tu DTI!</span></span></button>
+        <button class="option-btn" onclick="selectDebt('yes',null,event)"><span class="opt-icon">💳</span><span class="opt-text">Sí, tengo algunas deudas</span></button>
+        <button class="option-btn" onclick="selectDebt('unsure',1,event)"><span class="opt-icon">🤷</span><span class="opt-text">No estoy seguro/a</span></button>
+      </div>
+      <div class="debt-followup" id="debtFollowup">
+        <div class="debt-followup-label">¿Aproximadamente cuánto pagas al mes en todas tus deudas?</div>
+        <div class="debt-options">
+          <button class="debt-opt" onclick="selectDebtAmt('under500',3,event)">Menos de $500 al mes</button>
+          <button class="debt-opt" onclick="selectDebtAmt('500to1k',2,event)">$500 – $1,000 al mes</button>
+          <button class="debt-opt" onclick="selectDebtAmt('1kto1500',1,event)">$1,000 – $1,500 al mes</button>
+          <button class="debt-opt" onclick="selectDebtAmt('over1500',0,event)">Más de $1,500 al mes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q12 Timeline -->
+  <div class="screen" id="q12">
+    <div class="question-card">
+      <span class="question-emoji">📅</span>
+      <div class="question-text">¿Cuándo te gustaría comprar tu casa?</div>
+      <div class="question-sub">No hay respuesta incorrecta — esto me ayuda a orientarte mejor</div>
+      <div class="options">
+        <button class="option-btn" onclick="autoAdvance(12,'asap',0,event)"><span class="opt-icon">🚀</span><span class="opt-text">Lo antes posible<span class="opt-detail">En los próximos 3 meses</span></span></button>
+        <button class="option-btn" onclick="autoAdvance(12,'6months',0,event)"><span class="opt-icon">📆</span><span class="opt-text">En 3 a 6 meses</span></button>
+        <button class="option-btn" onclick="autoAdvance(12,'1year',0,event)"><span class="opt-icon">🗓️</span><span class="opt-text">Este año</span></button>
+        <button class="option-btn" onclick="autoAdvance(12,'2years',0,event)"><span class="opt-icon">⏳</span><span class="opt-text">En 1 a 2 años</span></button>
+        <button class="option-btn" onclick="autoAdvance(12,'exploring',0,event)"><span class="opt-icon">🔍</span><span class="opt-text">Solo estoy explorando por ahora</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAD CAPTURE -->
+  <div class="screen" id="leadScreen">
+    <div class="lead-capture">
+      <span class="burro-big">🫏</span>
+      <h2>¡Ya tengo tus respuestas!</h2>
+      <div class="lead-value-prop">
+        <div class="value-title">🎁 Lo que voy a hacer por ti — sin costo:</div>
+        <ul>
+          <li><span class="check">✓</span> Voy a revisar tu situación personalmente</li>
+          <li id="caPromise"><span class="check">✓</span> Voy a buscar programas de ayuda para el enganche disponibles en California para ti</li>
+          <li id="otherPromise" style="display:none"><span class="check">✓</span> Voy a investigar opciones de préstamo disponibles para tu situación</li>
+          <li><span class="check">✓</span> Te voy a llamar con un plan real y honesto — sin presión, sin compromiso</li>
+          <li><span class="check">✓</span> Si calificas para ayuda financiera, te lo digo directo</li>
+        </ul>
+      </div>
+      <div class="nieves-note">
+        <strong>— Nieves, Mortgage Loan Officer · NMLS #2036260</strong><br>
+        "Llegué a este país a los 8 años. Sé lo que es no saber por dónde empezar. Por eso hago esto — para que nadie tenga que navegarlo solo."
+      </div>
+      <div class="lead-form">
+        <label>Tu nombre</label>
+        <input type="text" id="leadName" placeholder="¿Cómo te llamas?" />
+        <label>Teléfono / WhatsApp</label>
+        <input type="tel" id="leadPhone" placeholder="(626) 000-0000" />
+        <label>Correo electrónico</label>
+        <input type="email" id="leadEmail" placeholder="tu@correo.com" />
+        <button class="submit-btn" onclick="submitLead()">🏡 Ver Mis Resultados →</button>
+      </div>
+      <p class="privacy-note">🔒 Tu información es 100% privada. Nunca la compartimos con nadie.</p>
+    </div>
+  </div>
+
+  <!-- GREEN RESULT -->
+  <div class="screen" id="resultGreen">
+    <div class="result-screen">
+      <div class="result-badge green">🟢 Resultado de tu quiz</div>
+      <div class="result-card green">
+        <span class="result-emoji">🏡🎉</span>
+        <div class="score-label">Tu Score de Preparación</div>
+        <div class="score-number" id="greenScore">0</div>
+        <div class="score-meter"><div class="meter-track"><div class="meter-fill" id="greenMeter" style="width:0%"></div></div><div class="meter-labels"><span>0</span><span>No listo</span><span>¡Listo!</span><span>28</span></div></div>
+        <h2>¡Estás más cerca de lo que piensas!</h2>
+        <p class="result-desc">Basado en tus respuestas, tienes una base sólida para empezar el proceso de compra. Muchas familias en tu situación ya están comprando casa — lo que necesitas es alguien que te guíe paso a paso.</p>
+      </div>
+      <div class="nieves-bonus">
+        <div class="bonus-title">⭐ Mi regalo para ti</div>
+        <p>Voy a revisar tus respuestas personalmente, investigar los programas de ayuda disponibles para tu situación, y te voy a llamar con opciones concretas. Guarda mi número para que no pierdas mi llamada.</p>
+      </div>
+      <div class="action-card">
+        <h3>📋 Tus próximos pasos</h3>
+        <div class="action-item">
+          <span class="action-num">1</span>
+          <div class="action-text"><strong>No hagas cambios grandes</strong> — no cambies de trabajo, no abras nuevas líneas de crédito, no hagas compras grandes. ¡Estabilidad es clave!</div>
+        </div>
+        <div class="action-item">
+          <span class="action-num">2</span>
+          <div class="action-text"><strong>Junta tus documentos:</strong> taxes de los últimos 2 años, estados de cuenta del banco (2 meses), y talones de cheque de los últimos 30 días (si tienes).</div>
+        </div>
+        <div class="action-item">
+          <span class="action-num">3</span>
+          <div class="action-text"><strong>No hagas cambios grandes</strong> — no cambies de trabajo, no abras nuevas líneas de crédito, no hagas compras grandes. ¡La estabilidad es clave!</div>
+        </div>
+      </div>
+      <div class="result-insight"><span class="ri-burro">🫏</span><div class="ri-text"><strong>El Burro dice:</strong> Muchas familias piensan que no pueden y resulta que sí. A veces lo único que falta es alguien que te explique el proceso sin complicaciones — y eso es exactamente para lo que estoy aquí. ¡Tú puedes, a huevo!</div></div>
+      <div class="phone-save"><p>📞 Guarda mi número — voy a llamarte pronto</p><div class="phone-num">(626) 536-7113</div><div class="phone-hint">Nieves · Golden Empire Mortgage · NMLS #2036260</div></div>
+      <a class="cta-btn primary" href="https://calendly.com/dineroahuevo/30min" target="_blank">📅 Agenda Tu Consulta Gratis</a>
+      <a class="cta-btn whatsapp" href="https://wa.me/16265367113?text=Hola%20Nieves%2C%20acab%C3%A9%20el%20quiz%20y%20quiero%20hablar%20contigo" target="_blank">💬 Escríbeme por WhatsApp Ahorita</a>
+    </div>
+  </div>
+
+  <!-- YELLOW RESULT -->
+  <div class="screen" id="resultYellow">
+    <div class="result-screen">
+      <div class="result-badge yellow">🟡 Resultado de tu quiz</div>
+      <div class="result-card yellow">
+        <span class="result-emoji">💪🔧</span>
+        <div class="score-label">Tu Score de Preparación</div>
+        <div class="score-number" id="yellowScore">0</div>
+        <div class="score-meter"><div class="meter-track"><div class="meter-fill" id="yellowMeter" style="width:0%"></div></div><div class="meter-labels"><span>0</span><span>No listo</span><span>¡Listo!</span><span>28</span></div></div>
+        <h2>¡Casi listo! — Solo faltan unos pasos</h2>
+        <p class="result-desc">Tienes buena base pero hay áreas que mejorar. Con el plan correcto, podrías estar listo para comprar en 3 a 6 meses. ¡No te desanimes — esto tiene solución!</p>
+      </div>
+      <div class="nieves-bonus">
+        <div class="bonus-title">⭐ Mi regalo para ti</div>
+        <p>Voy a revisar exactamente qué te falta, buscar programas de ayuda que puedan cerrar esa brecha, y te llamo personalmente con un plan paso a paso. Guarda mi número.</p>
+      </div>
+      <div class="action-card">
+        <h3>🔧 Tu plan de acción</h3>
+        <div class="action-item yellow-item">
+          <span class="action-num">1</span>
+          <div class="action-text"><strong>No hagas cambios grandes</strong> — no cambies de trabajo, no abras nuevas líneas de crédito, no hagas compras grandes. ¡Estabilidad es clave!</div>
+        </div>
+        <div class="action-item yellow-item">
+          <span class="action-num">2</span>
+          <div class="action-text"><strong>Empieza a ahorrar con intención.</strong> Abre una cuenta separada SOLO para el enganche. Automatiza un depósito cada quincena — aunque sea $200. En 6 meses tendrás $2,400 más.</div>
+        </div>
+        <div class="action-item yellow-item">
+          <span class="action-num">3</span>
+          <div class="action-text"><strong>Trabaja en tu crédito.</strong> Paga tus tarjetas a menos del 30% del límite. Si no tienes crédito, una tarjeta asegurada de $200 empieza a construir historial hoy mismo.</div>
+        </div>
+      </div>
+      <div class="result-insight"><span class="ri-burro">🫏</span><div class="ri-text"><strong>El Burro dice:</strong> La diferencia entre "no puedo" y "todavía no" son unos meses de preparación. Yo llegué a este país a los 8 años — y aprendí que con el plan correcto, todo es posible. ¡Tú ya diste el primer paso. Ahora mantén el paso, a huevo!</div></div>
+      <div class="phone-save"><p>📞 Guarda mi número — voy a llamarte pronto</p><div class="phone-num">(626) 536-7113</div><div class="phone-hint">Nieves · Golden Empire Mortgage · NMLS #2036260</div></div>
+      <a class="cta-btn gold" href="https://calendly.com/dineroahuevo/30min" target="_blank">📅 Agenda Tu Consulta — Te Hago un Plan</a>
+      <a class="cta-btn whatsapp" href="https://wa.me/16265367113?text=Hola%20Nieves%2C%20acab%C3%A9%20el%20quiz%20y%20tengo%20preguntas" target="_blank">💬 Escríbeme por WhatsApp</a>
+    </div>
+  </div>
+
+  <!-- RED RESULT -->
+  <div class="screen" id="resultRed">
+    <div class="result-screen">
+      <div class="result-badge red">🔴 Resultado de tu quiz</div>
+      <div class="result-card red">
+        <span class="result-emoji">🫏🗺️</span>
+        <div class="score-label">Tu Score de Preparación</div>
+        <div class="score-number" id="redScore">0</div>
+        <div class="score-meter"><div class="meter-track"><div class="meter-fill" id="redMeter" style="width:0%"></div></div><div class="meter-labels"><span>0</span><span>No listo</span><span>¡Listo!</span><span>28</span></div></div>
+        <h2>Todavía no — pero hay camino, te lo prometo</h2>
+        <p class="result-desc">Ser honesta contigo es la mejor forma de ayudarte. Hoy hay pasos que tomar antes de aplicar — pero muchas familias empezaron exactamente donde tú estás y compraron su casa. El camino existe.</p>
+      </div>
+      <div class="nieves-bonus">
+        <div class="bonus-title">⭐ Mi regalo para ti</div>
+        <p>No te voy a dejar solo/a con esto. Voy a revisar tus respuestas y preparar un plan concreto de qué hacer primero para llegar a tu meta. Te llamo para explicártelo sin complicaciones. Guarda mi número.</p>
+      </div>
+      <div class="action-card">
+        <h3>🗺️ Tu mapa para llegar</h3>
+        <div class="action-item red-item">
+          <span class="action-num">1</span>
+          <div class="action-text"><strong>No hagas cambios grandes</strong> — no cambies de trabajo, no abras nuevas líneas de crédito, no hagas compras grandes. ¡Estabilidad es clave!</div>
+        </div>
+        <div class="action-item red-item">
+          <span class="action-num">2</span>
+          <div class="action-text"><strong>Empieza a declarar tus taxes.</strong> Si trabajas por tu cuenta, necesitas 2 años de historial. Entre más pronto empieces, más pronto calificas.</div>
+        </div>
+        <div class="action-item red-item">
+          <span class="action-num">3</span>
+          <div class="action-text"><strong>Abre una cuenta de banco</strong> y deposita regularmente. Los lenders quieren ver historial bancario — cualquier cantidad, lo importante es la consistencia.</div>
+        </div>
+        <div class="action-item red-item">
+          <span class="action-num">4</span>
+          <div class="action-text"><strong>Empieza a construir crédito</strong> con una tarjeta asegurada. Úsala para gasolina y págala completa cada mes. En 6 a 12 meses tienes historial.</div>
+        </div>
+      </div>
+      <div class="result-insight"><span class="ri-burro">🫏</span><div class="ri-text"><strong>El Burro dice:</strong> Mi familia llegó a este país sin nada. Con trabajo, paciencia y el plan correcto — compraron su casa. Tú ya hiciste lo más difícil: buscar información. Ahora déjame ayudarte a trazar el camino. Tan fácil, hasta el burro aprende.</div></div>
+      <div class="phone-save"><p>📞 Guarda mi número — voy a llamarte pronto</p><div class="phone-num">(626) 536-7113</div><div class="phone-hint">Nieves · Golden Empire Mortgage · NMLS #2036260</div></div>
+      <a class="cta-btn whatsapp" href="https://wa.me/16265367113?text=Hola%20Nieves%2C%20acab%C3%A9%20el%20quiz%20y%20quiero%20saber%20por%20d%C3%B3nde%20empezar" target="_blank">💬 Escríbeme por WhatsApp Ahorita</a>
+      <a class="cta-btn secondary" href="https://calendly.com/dineroahuevo/30min" target="_blank">📅 Agenda una Llamada Gratis</a>
+    </div>
+  </div>
+
+  <div class="tagline">Tan fácil, hasta el burro aprende™</div>
+</div>
+
+<script>
+  const TOTAL_Q = 12;
+  let answers = {};
+  let totalScore = 0;
+  let locationIsCA = true;
+
+  function updateProgress(q) {
+    const pct = ((q - 1) / TOTAL_Q) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = 'Pregunta ' + q + ' de ' + TOTAL_Q;
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('active');
+    void el.offsetWidth;
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function recalc() {
+    totalScore = Object.values(answers).reduce((s, a) => s + (a.points || 0), 0);
+  }
+
+  function nextQ(q) {
+    if (q === 9 && answers[9] && answers[9].value === 'alone') return 11;
+    return q + 1;
+  }
+
+  function autoAdvance(qNum, value, points, event) {
+    answers[qNum] = { value, points };
+    recalc();
+    const screen = document.getElementById('q' + qNum);
+    screen.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('selected');
+    setTimeout(() => {
+      const next = nextQ(qNum);
+      if (next <= TOTAL_Q) { updateProgress(next); showScreen('q' + next); }
+      else goToLead();
+    }, 380);
+  }
+
+  // Location
+  function selectLoc(choice, event) {
+    locationIsCA = choice === 'ca';
+    document.querySelectorAll('#locOptions .option-btn').forEach(b => b.classList.remove('selected'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('selected');
+    const sub = document.getElementById('locSub');
+    const label = document.getElementById('locSubLabel');
+    sub.classList.add('visible');
+    if (locationIsCA) {
+      label.textContent = '¿En qué ciudad o condado de California?';
+      document.getElementById('locInput').placeholder = 'Ej: Los Angeles, Pomona, San Bernardino...';
+    } else {
+      label.textContent = '¿En qué estado quieres comprar?';
+      document.getElementById('locInput').placeholder = 'Ej: Texas, Nevada, Arizona...';
+    }
+    document.getElementById('locInput').value = '';
+    document.getElementById('locNext').disabled = true;
+    document.getElementById('locInput').focus();
+    // Update lead capture promise
+    document.getElementById('caPromise').style.display = locationIsCA ? 'flex' : 'none';
+    document.getElementById('otherPromise').style.display = locationIsCA ? 'none' : 'flex';
+  }
+
+  function checkInput(inputId, btnId) {
+    const val = document.getElementById(inputId).value.trim();
+    const btn = document.getElementById(btnId);
+    if (btn) btn.disabled = val.length < 2;
+  }
+
+  function submitLoc() {
+    const val = document.getElementById('locInput').value.trim();
+    if (!val) return;
+    answers[2] = { value: (locationIsCA ? 'CA: ' : 'Other: ') + val, points: 0 };
+    updateProgress(3);
+    showScreen('q3');
+  }
+
+  // Other employment
+  function showOtherEmp(event) {
+    document.getElementById('q4').querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('selected');
+    document.getElementById('otherEmpWrap').classList.add('visible');
+    document.getElementById('otherEmpInput').focus();
+  }
+
+  function submitOtherEmp() {
+    const val = document.getElementById('otherEmpInput').value.trim();
+    if (!val) return;
+    answers[4] = { value: 'other: ' + val, points: 1 };
+    recalc();
+    updateProgress(5);
+    showScreen('q5');
+  }
+
+  // Debt
+  function selectDebt(value, points, event) {
+    document.getElementById('q11').querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('selected');
+    if (value === 'yes') {
+      document.getElementById('debtFollowup').classList.add('visible');
+    } else {
+      answers[11] = { value, points };
+      recalc();
+      setTimeout(() => { updateProgress(12); showScreen('q12'); }, 380);
+    }
+  }
+
+  function selectDebtAmt(value, points, event) {
+    document.querySelectorAll('.debt-opt').forEach(b => b.classList.remove('selected'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('selected');
+    answers[11] = { value: 'yes_' + value, points };
+    recalc();
+    setTimeout(() => { updateProgress(12); showScreen('q12'); }, 380);
+  }
+
+  function goToLead() {
+    document.getElementById('progressContainer').style.display = 'none';
+    showScreen('leadScreen');
+  }
+
+  async function submitLead() {
+    const name = document.getElementById('leadName').value.trim();
+    const phone = document.getElementById('leadPhone').value.trim();
+    const email = document.getElementById('leadEmail').value.trim();
+    if (!name || !phone || !email) {
+      alert('Por favor llena tu nombre, teléfono y correo para ver tus resultados.');
+      return;
+    }
+
+    // Determine tier label
+    recalc();
+    const MAX = 28;
+    let tier = totalScore >= 20 ? '🟢 Listo Para Comprar' : totalScore >= 11 ? '🟡 En Camino' : '🔴 Todavía No';
+
+    // Build summary of key answers
+    const empleo = answers[4] ? answers[4].value : 'N/A';
+    const ubicacion = answers[2] ? answers[2].value : 'N/A';
+    const timeline = answers[12] ? answers[12].value : 'N/A';
+
+    // Disable button and show loading state
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+
+    // ⚠️ REPLACE 'mgonepvv' with your actual Formspree form ID
+    // Steps: go to formspree.io → New Form → copy the ID from your endpoint URL
+    // Example: if your endpoint is https://formspree.io/f/xpwzabcd, your ID is xpwzabcd
+    const FORMSPREE_ID = 'mgonepvv';
+
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `🏡 Nuevo Lead — ${name} — ${tier}`,
+          Nombre: name,
+          Teléfono: phone,
+          Email: email,
+          Score: `${totalScore}/28`,
+          Resultado: tier,
+          Ubicación: ubicacion,
+          Empleo: empleo,
+          Timeline: timeline,
+          Fecha: new Date().toLocaleString('es-MX', { timeZone: 'America/Los_Angeles' })
+        })
+      });
+
+      if (res.ok) {
+        showResults();
+      } else {
+        // Still show results even if submission fails — never block the user
+        console.warn('Formspree submission failed — showing results anyway');
+        showResults();
+      }
+    } catch (err) {
+      // Network error — still show results
+      console.warn('Formspree network error — showing results anyway', err);
+      showResults();
+    }
+  }
+
+  function showResults() {
+    recalc();
+    // Real max score is 28 (Q1:2 + Q3:4 + Q4:4 + Q5:3 + Q6:4 + Q7:4 + Q8:4 + Q11:3)
+    const MAX = 28;
+    const pct = Math.round((totalScore / MAX) * 100);
+    let resultId, scoreId, meterId;
+    // Tiers calibrated to real max:
+    // Green: 20-28 (top ~70%) = solid profile
+    // Yellow: 11-19 (middle) = needs work
+    // Red: 0-10 (bottom) = foundational gaps
+    if (totalScore >= 20) { resultId = 'resultGreen'; scoreId = 'greenScore'; meterId = 'greenMeter'; }
+    else if (totalScore >= 11) { resultId = 'resultYellow'; scoreId = 'yellowScore'; meterId = 'yellowMeter'; }
+    else { resultId = 'resultRed'; scoreId = 'redScore'; meterId = 'redMeter'; }
+    document.getElementById('progressContainer').style.display = 'none';
+    showScreen(resultId);
+    setTimeout(() => {
+      document.getElementById(scoreId).textContent = totalScore + '/28';
+      document.getElementById(meterId).style.width = pct + '%';
+    }, 400);
+  }
+
+  updateProgress(1);
+</script>
+</body>
+</html>
